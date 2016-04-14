@@ -85,4 +85,4 @@ class speech_api:
             result = res.json()["results"][0]
             return result["lexical"]
         else:
-            raise response.raise_for_status()
+            raise res.raise_for_status()
