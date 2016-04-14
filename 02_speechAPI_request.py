@@ -15,7 +15,7 @@ api = speech_api.speech_api(clientId, clientSecret)
 content = api.text_to_speech(text, "en-US", True)
 retext = api.speech_to_text(content, "en-US", 8000, "ulm")
 
-title = "Speech API sample"
+title = "Speech APIs sample"
 template = template.html_template()
 template.writeHtml(title, retext)
 
