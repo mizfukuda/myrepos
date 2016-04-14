@@ -1,82 +1,88 @@
 #! /usr/bin/env python
 
-### 
-#Copyright (c) Microsoft Corporation 
-#All rights reserved.  
-#MIT License 
-#Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the ""Software""), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: 
-#The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. 
-#THE SOFTWARE IS PROVIDED *AS IS*, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. 
-### 
-#import http.client, 
-#from urllib3.parse.urlencode import urllib3
-import requests, json, sys
- 
-#VoiceSynthesisRequest
+import urllib
+import json
+import requests
 
-#Note: Sign up at http://www.projectoxford.ai to get a subscription key.   
-#Search for Speech APIs from Azure Marketplace. 
-#Use the subscription key as Client secret below. 
-clientId = "14c6e142-5175-4fec-b168-d9c9948d4fcc" 
-clientSecret = "1cd81cba858147798dc63b993d88e727" 
-ttsHost = "https://speech.platform.bing.com" 
+class speech_api:
+    
+    def __init__(self, client_id, client_secret):
+        url = "https://oxford-speech.cloudapp.net//token/issueToken"
 
-url0 = "https://oxford-speech.cloudapp.net/token/issueToken"
-params0 = {'grant_type': 'client_credentials', 'client_id': clientId, 'client_secret': clientSecret, 'scope': ttsHost}
-headers0 = {"Content-type": "application/x-www-form-urlencoded"} 
+        headers = {
+            "Content-type": "application/x-www-form-urlencoded"
+        }
 
-print ("The body data: %s" %(params0)) 
+        params = urllib.urlencode(
+            {"grant_type": "client_credentials",
+             "client_id": client_id,
+             "client_secret": client_secret,
+             "scope": "https://speech.platform.bing.com"}
+        )
 
-#params0 = urllib3.parse.urlencode({'grant_type': 'client_credentials', 'client_id': clientId, 'client_secret': clientSecret, 'scope': ttsHost}) 
-#AccessTokenHost = "oxford-speech.cloudapp.net" 
-#path = "/token/issueToken" 
-# Connect to server to get the Oxford Access Token 
-#conn = http.client.HTTPSConnection(AccessTokenHost) 
-#conn.request("POST", path, params, headers) 
-#response = conn.getresponse() 
-#conn.close() 
+        res = requests.post(url, data=params, headers=headers)
 
-response0 = requests.post(
-    url0,
-    data=json.dumps(params0),
-    headers=headers0
-    )
-print(response0.status_code, response0.reason) 
+        if res.ok:
+            _body = res.json()
+            self.token = _body["access_token"]
+            #return _body["access_token"]
+        else:
+            res.raise_for_status()
 
-data = response0.text
-#accesstoken = data.decode("UTF-8") 
-accesstoken = data
-print ("Oxford Access Token: " + accesstoken) 
+        
+    def text_to_speech(self, text, lang, female):
+        template = """
+            <speak version='1.0' xml:lang='{0}'>
+                <voice xml:lang='{0}' xml:gender='{1}' name='{2}'>
+                    {3}
+                </voice>
+            </speak>
+            """
 
-#decode the object from json 
-ddata=json.loads(accesstoken) 
-access_token = ddata['access_token'] 
+        url = "https://speech.platform.bing.com/synthesize"
+        headers = {
+            "Content-type": "application/ssml+xml",
+            "X-Microsoft-OutputFormat": "riff-16khz-16bit-mono-pcm",
+            "Authorization": "Bearer " + self.token,
+            "X-Search-AppId": "07D3234E49CE426DAA29772419F436CA",
+            "X-Search-ClientID": "1ECFAE91408841A480F00935DC390960",
+            "User-Agent": "OXFORD_TEST"
+        }
+        name = "Microsoft Server Speech Text to Speech Voice (en-US, ZiraRUS)"
+        data = template.format(lang, "Female" if female else "Male", name, text)
 
-url = "https://speech.platform.bing.com/synthesize"
-body = "<speak version='1.0' xml:lang='en-us'><voice xml:lang='en-us' xml:gender='Female' name='Microsoft Server Speech Text to Speech Voice (en-US, ZiraRUS)'>This is a demo to call microsoft text to speach service in python.</voice></speak>" 
-headers = {"Content-type": "application/ssml+xml",  
-    	   "X-Microsoft-OutputFormat": "riff-16khz-16bit-mono-pcm",  
-	       "Authorization": "Bearer " + access_token,  
-	       "X-Search-AppId": "07D3234E49CE426DAA29772419F436CA",  
-	       "X-Search-ClientID": "1ECFAE91408841A480F00935DC390960",  
-	       "User-Agent": "TTSForPython"} 
+        res = requests.post(url, data=data, headers=headers)
 
-#Connect to server to synthesize the wave 
-response = requests.post(
-    url,
-    data=json.dumps(body),
-    headers=headers
-    )
+        if res.ok:
+            return res.content
+        else:
+            raise res.raise_for_status()
 
-# output
-if response.status_code == requests.codes.ok:
-    print(response.text)
-else:  # err
-    print('stauts_code: {} (reason: {})'.format(response.status_code, response.reason))
-    sys.exit(1)
+            
+    def speech_to_text(self, binary, lang, samplerate, scenarios):
+        data = binary
+        params = {
+            "version": "3.0",
+            "appID": "D4D52672-91D7-4C74-8AD8-42B1D98141A5",
+            "instanceid": "1ECFAE91408841A480F00935DC390960",
+            "requestid": "b2c95ede-97eb-4c88-81e4-80f32d6aee54",
+            "format": "json",
+            "locale": lang,
+            "device.os": "Windows10",
+            "scenarios": scenarios,
+        }
 
-'''
-data = response.Text
-#conn.close() 
-print("The synthesized wave length: %d" %(len(data))) 
-'''
+        url = "https://speech.platform.bing.com/recognize/query?" + urllib.urlencode(params)
+        headers = {"Content-type": "audio/wav; samplerate={0}".format(samplerate),
+                   "Authorization": "Bearer " + self.token,
+                   "X-Search-AppId": "07D3234E49CE426DAA29772419F436CA",
+                   "X-Search-ClientID": "1ECFAE91408841A480F00935DC390960",
+                   "User-Agent": "OXFORD_TEST"}
+
+        res = requests.post(url, data=data, headers=headers)
+
+        if res.ok:
+            result = res.json()["results"][0]
+            return result["lexical"]
+        else:
+            raise response.raise_for_status()
