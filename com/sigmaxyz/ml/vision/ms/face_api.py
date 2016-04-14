@@ -16,6 +16,7 @@ class face_api:
                             data=json.dumps({'url' : imagePath}),
                             headers=self.headers
                             )
+        '''
         if res.status_code == requests.codes.ok:
             self.status_code = res.status_code
             self.ans = res.text
@@ -23,4 +24,9 @@ class face_api:
             self.status_code = res.status_code
             self.ans = self.reason
         return self.status_code,self.ans
+        '''
+        if res.ok:
+            return res.text
+        else:
+            raise res.raise_for_status()
 
