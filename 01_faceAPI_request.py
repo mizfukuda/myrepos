@@ -13,6 +13,6 @@ result = api.request("http://www.sigmaxyz.com/wp-content/themes/sigmaxyz/_conten
                             "true",
                             "true")
                             
-title = "Face APIs sample"
+title = "Face API sample"
 template = template.html_template()
 template.writeHtml(title, result)
