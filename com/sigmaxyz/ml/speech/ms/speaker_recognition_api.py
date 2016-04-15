@@ -81,6 +81,7 @@ class identification_profile:
         else:
             res.raise_for_status()
 
+'''
     def create_enrollment(self, id, content):
 
         url = "https://api.projectoxford.ai/spid/v1.0/identificationProfiles/%s/enroll" % id
@@ -114,3 +115,4 @@ class identification_profile:
             return result
         else:
             res.raise_for_status()
+'''

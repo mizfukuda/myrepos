@@ -1,4 +1,5 @@
 #! /usr/bin/env python
+# coding: utf-8
 
 class html_template:
     
@@ -11,5 +12,5 @@ class html_template:
                 </head>
                 <body>%s</body>
             </html>"""
-        print(html % (title,body))
+        print(html % (title, body))
     

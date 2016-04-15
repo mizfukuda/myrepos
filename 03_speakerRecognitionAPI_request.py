@@ -19,7 +19,7 @@ output = "プロファイルIDを取得：" + str(id) + "</br>"
 list = api.get_all_profiles()
 output += "プロファイルリストを取得</br>"
 for dict in list:
-    output += "str(dict['identificationProfileId']) + "</br>"
+    output += "str(dict['identificationProfileId'])" + "</br>"
 
 profile = api.get_profile(id)
 output += "プロファイルIDを取得：" + str(profile) + "</br>"
