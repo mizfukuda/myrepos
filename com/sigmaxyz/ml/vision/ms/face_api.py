@@ -2,7 +2,7 @@
 
 import urllib
 import json
-import requests
+import requests,ast
 
 class face_api:
     
@@ -18,7 +18,12 @@ class face_api:
                             )
 
         if res.ok:
-            return res.text
+            result = []
+            list = ast.literal_eval(res.text)
+            for i in list:
+                dict = ast.literal_eval(str(i))
+                result.append(dict)
+            return result
         else:
             raise res.raise_for_status()
 
