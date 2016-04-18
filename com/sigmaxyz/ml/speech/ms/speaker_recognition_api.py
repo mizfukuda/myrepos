@@ -46,7 +46,7 @@ class identification_profile:
 
         url = "https://api.projectoxford.ai/spid/v1.0/identificationProfiles"
         headers = {
-            'Ocp-Apim-Subscription-Key': self.client_secret,
+            'Ocp-Apim-Subscription-Key': self.client_secret
             }
         params = urllib.urlencode({
             })
@@ -67,7 +67,7 @@ class identification_profile:
 
         url = "https://api.projectoxford.ai/spid/v1.0/identificationProfiles/%s" % id
         headers = {
-            'Ocp-Apim-Subscription-Key': self.client_secret,
+            'Ocp-Apim-Subscription-Key': self.client_secret
             }
         params = urllib.urlencode({
             })
@@ -80,14 +80,15 @@ class identification_profile:
         else:
             res.raise_for_status()
 
-'''
     def create_enrollment(self, id, content):
 
         url = "https://api.projectoxford.ai/spid/v1.0/identificationProfiles/%s/enroll" % id
         headers = {
             'Content-Type': 'multipart/form-data',
-            'Ocp-Apim-Subscription-Key': self.client_secret,
+            'Ocp-Apim-Subscription-Key': self.client_secret
             }
+        params = urllib.urlencode({
+            })
 
         res = requests.post(url, data=content, headers=headers)
 
@@ -135,7 +136,8 @@ class speaker_recognition:
             return result
         else:
             res.raise_for_status()
-            
+
+'''
     def identification(self, id):
     
         url = "https://api.projectoxford.ai/spid/v1.0/identify?identificationProfileIds=%s" % id

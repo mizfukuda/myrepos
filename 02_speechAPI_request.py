@@ -15,6 +15,7 @@ api = speech_api.speech_api(clientId, clientSecret)
 text = "This is a demo to call microsoft text to speach service in python. hogehoge!"
 content = api.text_to_speech(text, "en-US", True)
 retext = api.speech_to_text(content, "en-US", 8000, "ulm")
+
 '''
 text = "roumaji de nyuuryoku suru to deru no kana. hoge hoge !"
 content = api.text_to_speech(text, "ja-JP", True)

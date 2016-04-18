@@ -25,7 +25,6 @@ class speech_api:
         if res.ok:
             _body = res.json()
             self.token = _body["access_token"]
-            #return _body["access_token"]
         else:
             res.raise_for_status()
 
@@ -71,7 +70,6 @@ class speech_api:
             "device.os": "Windows10",
             "scenarios": scenarios,
         }
-
         url = "https://speech.platform.bing.com/recognize/query?" + urllib.urlencode(params)
         headers = {"Content-type": "audio/wav; samplerate={0}".format(samplerate),
                    "Authorization": "Bearer " + self.token,

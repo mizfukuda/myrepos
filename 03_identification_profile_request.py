@@ -15,6 +15,7 @@ api = speaker_recognition_api.identification_profile(clientSecret)
 
 id = api.create_profile("en-US")
 output = "プロファイルIDを取得：" + str(id) + "</br>"
+print(output)
 
 list = api.get_all_profiles()
 output += "プロファイルリストを取得</br>"
@@ -24,10 +25,10 @@ for dict in list:
 profile = api.get_profile(id)
 output += "プロファイルIDを取得：" + str(profile) + "</br>"
 
+
 api.delete_profile(id)
 
 
 title = "SpeakerRecognition API sample - identification_profile"
 template = template.html_template()
 template.writeHtml(title, output)
-
